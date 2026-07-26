@@ -1,0 +1,80 @@
+// Prisma schema for the Client & Booking Manager
+// Run `npx prisma db push` after setting DATABASE_URL in .env
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Business {
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  passwordHash String
+  slug         String         @unique // used for public booking URL, e.g. /book/bright-cuts
+  businessType String?
+  createdAt    DateTime       @default(now())
+
+  clients      Client[]
+  availability Availability[]
+  appointments Appointment[]
+  invoices     Invoice[]
+}
+
+model Client {
+  id         String   @id @default(uuid())
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId String
+  name       String
+  email      String?
+  phone      String?
+  notes      String?
+  createdAt  DateTime @default(now())
+
+  appointments Appointment[]
+  invoices     Invoice[]
+}
+
+model Availability {
+  id         String   @id @default(uuid())
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId String
+  dayOfWeek  Int // 0 = Sunday ... 6 = Saturday
+  startTime  String // "09:00"
+  endTime    String // "17:00"
+}
+
+model Appointment {
+  id          String   @id @default(uuid())
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId  String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId    String
+  serviceName String
+  startTime   DateTime
+  endTime     DateTime
+  status      String   @default("scheduled") // scheduled | completed | cancelled
+  price       Float?
+  createdAt   DateTime @default(now())
+
+  invoice     Invoice?
+}
+
+model Invoice {
+  id              String       @id @default(uuid())
+  business        Business     @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId      String
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id])
+  appointmentId   String?      @unique
+  client          Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId        String
+  amount          Float
+  status          String       @default("unpaid") // unpaid | paid | overdue
+  stripePaymentId String?
+  dueDate         DateTime?
+  createdAt       DateTime     @default(now())
+}
