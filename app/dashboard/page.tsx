@@ -57,11 +57,23 @@ export default async function DashboardPage() {
         <div>
           <h1 style={{ margin: 0, fontSize: 20 }}>Welcome back</h1>
           <p style={{ margin: "4px 0 0", color: "#666", fontSize: 14 }}>{business.name}</p>
+          <p style={{ margin: "4px 0 0", fontSize: 13 }}>
+            Your booking link: <a href={`/book/${business.slug}`} target="_blank" style={{ color: "#0c447c" }}>
+              {typeof window !== "undefined" ? window.location.origin : ""}/book/{business.slug}
+            </a>
+          </p>
         </div>
         <form action="/api/auth/logout" method="post">
           <button type="submit" style={buttonStyle}>Log out</button>
         </form>
       </div>
+
+      <nav style={{ display: "flex", gap: 16, marginBottom: 24, borderBottom: "1px solid #eee", paddingBottom: 12 }}>
+        <a href="/dashboard/clients" style={navLinkStyle}>Clients</a>
+        <a href="/dashboard/appointments" style={navLinkStyle}>Appointments</a>
+        <a href="/dashboard/invoices" style={navLinkStyle}>Invoices</a>
+        <a href="/dashboard/availability" style={navLinkStyle}>Availability</a>
+      </nav>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 24 }}>
         <MetricCard label="Today's appointments" value={todaysAppointments.length} />
@@ -156,4 +168,10 @@ const buttonStyle: React.CSSProperties = {
   borderRadius: 6,
   background: "#fff",
   cursor: "pointer",
+};
+const navLinkStyle: React.CSSProperties = {
+  fontSize: 14,
+  color: "#111",
+  textDecoration: "none",
+  fontWeight: 500,
 };
