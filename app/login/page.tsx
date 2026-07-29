@@ -33,56 +33,53 @@ export default function LoginPage() {
   }
 
   return (
-    <main style={{ maxWidth: 400, margin: "80px auto", padding: "0 16px" }}>
-      <h1 style={{ marginBottom: 8 }}>Log in</h1>
-      <p style={{ color: "#666", marginBottom: 24 }}>Welcome back.</p>
+    <main style={{ minHeight: "100vh", background: "var(--paper)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+      <div style={{ maxWidth: 400, width: "100%" }}>
+        <a href="/" className="font-display" style={{ fontSize: 20, fontWeight: 600, color: "var(--ink)", textDecoration: "none", display: "block", marginBottom: 32 }}>
+          Ledger
+        </a>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={inputStyle}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={inputStyle}
-        />
+        <h1 className="font-display" style={{ fontSize: 28, fontWeight: 600, margin: "0 0 6px", color: "var(--ink)" }}>
+          Welcome back
+        </h1>
+        <p style={{ color: "#5c6b64", marginBottom: 28, fontSize: 14.5 }}>Log in to your dashboard.</p>
 
-        {error && <p style={{ color: "#c0392b", fontSize: 14 }}>{error}</p>}
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required style={inputStyle} />
+          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required style={inputStyle} />
 
-        <button type="submit" disabled={loading} style={buttonStyle}>
-          {loading ? "Logging in…" : "Log in"}
-        </button>
-      </form>
+          {error && <p style={{ color: "#B65C3D", fontSize: 14, margin: 0 }}>{error}</p>}
 
-      <p style={{ marginTop: 16, fontSize: 14 }}>
-        Don't have an account? <a href="/signup">Sign up</a>
-      </p>
+          <button type="submit" disabled={loading} style={buttonStyle}>
+            {loading ? "Logging in…" : "Log in"}
+          </button>
+        </form>
+
+        <p style={{ marginTop: 20, fontSize: 14, color: "#5c6b64" }}>
+          Don't have an account? <a href="/signup" style={{ color: "var(--ink)", fontWeight: 600 }}>Sign up</a>
+        </p>
+      </div>
     </main>
   );
 }
 
 const inputStyle: React.CSSProperties = {
-  padding: "10px 12px",
+  padding: "12px 14px",
   fontSize: 14,
-  border: "1px solid #ccc",
+  border: "1px solid #D7D0C0",
   borderRadius: 6,
+  background: "#fff",
+  color: "var(--ink)",
 };
 
 const buttonStyle: React.CSSProperties = {
-  padding: "10px 12px",
+  padding: "12px 14px",
   fontSize: 14,
-  fontWeight: 500,
-  background: "#111",
-  color: "#fff",
+  fontWeight: 600,
+  background: "var(--amber)",
+  color: "var(--ink)",
   border: "none",
   borderRadius: 6,
   cursor: "pointer",
+  marginTop: 6,
 };

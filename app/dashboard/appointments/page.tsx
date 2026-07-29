@@ -35,10 +35,7 @@ export default function AppointmentsPage() {
 
   async function loadData() {
     setLoading(true);
-    const [clientsRes, apptsRes] = await Promise.all([
-      fetch("/api/clients"),
-      fetch("/api/appointments"),
-    ]);
+    const [clientsRes, apptsRes] = await Promise.all([fetch("/api/clients"), fetch("/api/appointments")]);
     if (clientsRes.ok) setClients(await clientsRes.json());
     if (apptsRes.ok) setAppointments(await apptsRes.json());
     setLoading(false);
@@ -103,22 +100,18 @@ export default function AppointmentsPage() {
     await fetch("/api/invoices", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        appointmentId: appt.id,
-        clientId: clientMatch?.id,
-        amount: appt.price,
-      }),
+      body: JSON.stringify({ appointmentId: appt.id, clientId: clientMatch?.id, amount: appt.price }),
     });
     setActioningId(null);
     alert("Invoice created. View it on the Invoices page.");
   }
 
   return (
-    <main style={{ maxWidth: 750, margin: "40px auto", padding: "0 16px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 20 }}>Appointments</h1>
-          <p style={{ margin: "4px 0 0", color: "#666", fontSize: 14 }}>Upcoming week</p>
+          <h1 className="font-display" style={{ margin: 0, fontSize: 22, fontWeight: 600, color: "var(--ink)" }}>Appointments</h1>
+          <p style={{ margin: "4px 0 0", color: "#5c6b64", fontSize: 14 }}>Upcoming week</p>
         </div>
         <button onClick={() => setShowForm((s) => !s)} style={primaryButtonStyle} disabled={clients.length === 0}>
           {showForm ? "Cancel" : "Book appointment"}
@@ -126,67 +119,27 @@ export default function AppointmentsPage() {
       </div>
 
       {clients.length === 0 && (
-        <p style={{ color: "#c0392b", fontSize: 14 }}>
-          Add a client first before booking an appointment. <a href="/dashboard/clients">Go to clients →</a>
+        <p style={{ color: "#B65C3D", fontSize: 14 }}>
+          Add a client first. <a href="/dashboard/clients" style={{ color: "#B65C3D" }}>Go to clients →</a>
         </p>
       )}
 
       {showForm && (
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 10,
-            background: "#f9f9f8",
-            border: "1px solid #e5e5e5",
-            borderRadius: 8,
-            padding: 16,
-            marginBottom: 20,
-          }}
-        >
+        <form onSubmit={handleSubmit} style={formCardStyle}>
           <select value={clientId} onChange={(e) => setClientId(e.target.value)} required style={inputStyle}>
             <option value="">Select a client</option>
             {clients.map((c) => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
-          <input
-            type="text"
-            placeholder="Service (e.g. Haircut)"
-            value={serviceName}
-            onChange={(e) => setServiceName(e.target.value)}
-            required
-            style={inputStyle}
-          />
-          <label style={{ fontSize: 13, color: "#666" }}>Start time</label>
-          <input
-            type="datetime-local"
-            value={start}
-            onChange={(e) => setStart(e.target.value)}
-            required
-            style={inputStyle}
-          />
-          <label style={{ fontSize: 13, color: "#666" }}>Duration (minutes)</label>
-          <input
-            type="number"
-            value={duration}
-            onChange={(e) => setDuration(Number(e.target.value))}
-            min={15}
-            step={15}
-            style={inputStyle}
-          />
-          <label style={{ fontSize: 13, color: "#666" }}>Price (optional, needed to invoice later)</label>
-          <input
-            type="number"
-            placeholder="e.g. 85"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            min={0}
-            step="0.01"
-            style={inputStyle}
-          />
-          {error && <p style={{ color: "#c0392b", fontSize: 14, margin: 0 }}>{error}</p>}
+          <input type="text" placeholder="Service (e.g. Haircut)" value={serviceName} onChange={(e) => setServiceName(e.target.value)} required style={inputStyle} />
+          <label style={{ fontSize: 13, color: "#5c6b64" }}>Start time</label>
+          <input type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} required style={inputStyle} />
+          <label style={{ fontSize: 13, color: "#5c6b64" }}>Duration (minutes)</label>
+          <input type="number" value={duration} onChange={(e) => setDuration(Number(e.target.value))} min={15} step={15} style={inputStyle} />
+          <label style={{ fontSize: 13, color: "#5c6b64" }}>Price (optional)</label>
+          <input type="number" placeholder="e.g. 85" value={price} onChange={(e) => setPrice(e.target.value)} min={0} step="0.01" style={inputStyle} />
+          {error && <p style={{ color: "#B65C3D", fontSize: 14, margin: 0 }}>{error}</p>}
           <button type="submit" disabled={submitting} style={primaryButtonStyle}>
             {submitting ? "Booking…" : "Book appointment"}
           </button>
@@ -198,42 +151,25 @@ export default function AppointmentsPage() {
       ) : appointments.length === 0 ? (
         <p style={{ color: "#999", fontSize: 14 }}>No appointments booked yet.</p>
       ) : (
-        <div style={{ border: "1px solid #e5e5e5", borderRadius: 8, overflow: "hidden" }}>
+        <div style={listCardStyle}>
           {appointments.map((a, i) => (
-            <div
-              key={a.id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "12px 16px",
-                borderBottom: i < appointments.length - 1 ? "1px solid #eee" : "none",
-              }}
-            >
+            <div key={a.id} style={{ ...rowStyle, borderBottom: i < appointments.length - 1 ? "1px solid #eee" : "none" }}>
               <div>
-                <p style={{ margin: 0, fontSize: 14 }}>
+                <p style={{ margin: 0, fontSize: 14, color: "var(--ink)" }}>
                   {a.client.name} — {a.serviceName} {a.price ? `($${a.price})` : ""}
                 </p>
-                <p style={{ margin: 0, fontSize: 12, color: "#666" }}>
+                <p className="font-mono" style={{ margin: 0, fontSize: 12, color: "#5c6b64" }}>
                   {new Date(a.startTime).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })} · {a.status}
                 </p>
               </div>
               <div style={{ display: "flex", gap: 8 }}>
                 {a.status === "scheduled" && (
-                  <button
-                    onClick={() => markCompleted(a.id)}
-                    disabled={actioningId === a.id}
-                    style={secondaryButtonStyle}
-                  >
+                  <button onClick={() => markCompleted(a.id)} disabled={actioningId === a.id} style={secondaryButtonStyle}>
                     Mark completed
                   </button>
                 )}
                 {a.status === "completed" && (
-                  <button
-                    onClick={() => generateInvoice(a)}
-                    disabled={actioningId === a.id}
-                    style={secondaryButtonStyle}
-                  >
+                  <button onClick={() => generateInvoice(a)} disabled={actioningId === a.id} style={secondaryButtonStyle}>
                     Generate invoice
                   </button>
                 )}
@@ -242,38 +178,13 @@ export default function AppointmentsPage() {
           ))}
         </div>
       )}
-
-      <p style={{ marginTop: 20 }}>
-        <a href="/dashboard" style={{ fontSize: 14 }}>← Back to dashboard</a>
-      </p>
-    </main>
+    </div>
   );
 }
 
-const inputStyle: React.CSSProperties = {
-  padding: "10px 12px",
-  fontSize: 14,
-  border: "1px solid #ccc",
-  borderRadius: 6,
-};
-
-const primaryButtonStyle: React.CSSProperties = {
-  padding: "8px 14px",
-  fontSize: 14,
-  fontWeight: 500,
-  background: "#111",
-  color: "#fff",
-  border: "none",
-  borderRadius: 6,
-  cursor: "pointer",
-};
-
-const secondaryButtonStyle: React.CSSProperties = {
-  padding: "6px 10px",
-  fontSize: 13,
-  background: "#fff",
-  color: "#111",
-  border: "1px solid #ccc",
-  borderRadius: 6,
-  cursor: "pointer",
-};
+const inputStyle: React.CSSProperties = { padding: "10px 12px", fontSize: 14, border: "1px solid #D7D0C0", borderRadius: 6, background: "#fff", color: "var(--ink)" };
+const primaryButtonStyle: React.CSSProperties = { padding: "9px 16px", fontSize: 14, fontWeight: 600, background: "var(--amber)", color: "var(--ink)", border: "none", borderRadius: 6, cursor: "pointer" };
+const secondaryButtonStyle: React.CSSProperties = { padding: "6px 12px", fontSize: 13, background: "#fff", color: "var(--ink)", border: "1px solid #D7D0C0", borderRadius: 6, cursor: "pointer" };
+const formCardStyle: React.CSSProperties = { display: "flex", flexDirection: "column", gap: 10, background: "#fff", border: "1px solid #E4DDCC", borderRadius: 8, padding: 16, marginBottom: 20 };
+const listCardStyle: React.CSSProperties = { background: "#fff", border: "1px solid #E4DDCC", borderRadius: 8, overflow: "hidden" };
+const rowStyle: React.CSSProperties = { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px" };
