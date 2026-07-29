@@ -18,9 +18,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </a>
           <nav style={{ display: "flex", gap: 20, alignItems: "center", flexWrap: "wrap" }}>
             <a href="/dashboard/clients" style={navLinkStyle}>Clients</a>
+            <a href="/dashboard/services" style={navLinkStyle}>Services</a>
             <a href="/dashboard/appointments" style={navLinkStyle}>Appointments</a>
             <a href="/dashboard/invoices" style={navLinkStyle}>Invoices</a>
             <a href="/dashboard/availability" style={navLinkStyle}>Availability</a>
+            <a href="/dashboard/new-booking" style={{ ...navLinkStyle, background: "var(--amber)", color: "var(--ink)", padding: "6px 12px", borderRadius: 6, fontWeight: 600, opacity: 1 }}>
+              + New booking
+            </a>
             <form action="/api/auth/logout" method="post">
               <button type="submit" style={logoutButtonStyle}>Log out</button>
             </form>

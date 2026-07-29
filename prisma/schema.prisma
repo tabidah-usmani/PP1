@@ -23,6 +23,7 @@ model Business {
   availability Availability[]
   appointments Appointment[]
   invoices     Invoice[]
+  services     Service[]
 }
 
 model Client {
@@ -37,6 +38,15 @@ model Client {
 
   appointments Appointment[]
   invoices     Invoice[]
+}
+
+model Service {
+  id         String   @id @default(uuid())
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId String
+  name       String
+  price      Float
+  createdAt  DateTime @default(now())
 }
 
 model Availability {
@@ -73,7 +83,8 @@ model Invoice {
   client          Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
   clientId        String
   amount          Float
-  status          String       @default("unpaid") // unpaid | paid | overdue
+  amountPaid      Float        @default(0) // running total of cash/manual payments recorded
+  status          String       @default("unpaid") // unpaid | partial | paid | overdue
   stripePaymentId String?
   dueDate         DateTime?
   createdAt       DateTime     @default(now())
